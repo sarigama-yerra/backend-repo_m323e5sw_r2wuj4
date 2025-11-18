@@ -11,8 +11,8 @@ Model name is converted to lowercase for the collection name:
 - BlogPost -> "blogs" collection
 """
 
-from pydantic import BaseModel, Field
-from typing import Optional
+from pydantic import BaseModel, Field, EmailStr
+from typing import Optional, List, Literal
 
 # Example schemas (replace with your own):
 
@@ -38,11 +38,52 @@ class Product(BaseModel):
     category: str = Field(..., description="Product category")
     in_stock: bool = Field(True, description="Whether product is in stock")
 
-# Add your own schemas here:
-# --------------------------------------------------
+# Water treatment lead schema for contact/assessment submissions
+class Lead(BaseModel):
+    """
+    Leads collection schema for water treatment inquiries
+    Collection name: "lead"
+    """
+    full_name: str = Field(..., description="Prospect full name")
+    email: EmailStr = Field(..., description="Prospect email")
+    phone: Optional[str] = Field(None, description="Prospect phone number")
 
-# Note: The Flames database viewer will automatically:
-# 1. Read these schemas from GET /schema endpoint
-# 2. Use them for document validation when creating/editing
-# 3. Handle all database operations (CRUD) directly
-# 4. You don't need to create any database endpoints!
+    # Structured intent and context
+    user_intent: Literal[
+        "learn_more",
+        "get_quote",
+        "book_assessment",
+        "service_existing",
+        "other",
+    ] = Field(..., description="Primary intent of the visitor")
+
+    property_type: Optional[Literal["single_family", "condo", "multi_unit", "commercial", "spa_gym", "other"]] = Field(
+        None, description="Property type"
+    )
+    occupants: Optional[int] = Field(None, ge=1, le=50, description="Household occupants")
+
+    # Health and water concerns
+    concerns: Optional[List[Literal[
+        "taste_odor",
+        "chlorine",
+        "hardness_scale",
+        "lead_metals",
+        "pfas",
+        "bacteria",
+        "whole_home_filtration",
+        "drinking_water",
+        "shower_skin_hair",
+        "appliance_protection",
+        "other",
+    ]]] = Field(None, description="Selected water concerns")
+
+    budget_range: Optional[Literal[
+        "under_1k",
+        "1k_3k",
+        "3k_6k",
+        "6k_plus",
+        "unsure",
+    ]] = Field(None, description="Estimated budget range")
+
+    message: Optional[str] = Field(None, description="Additional context provided by prospect")
+    source: Optional[str] = Field(None, description="Marketing attribution or source tag")
