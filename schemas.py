@@ -13,6 +13,7 @@ Model name is converted to lowercase for the collection name:
 
 from pydantic import BaseModel, Field, EmailStr
 from typing import Optional, List, Literal
+from datetime import datetime
 
 # Example schemas (replace with your own):
 
@@ -87,3 +88,8 @@ class Lead(BaseModel):
 
     message: Optional[str] = Field(None, description="Additional context provided by prospect")
     source: Optional[str] = Field(None, description="Marketing attribution or source tag")
+
+    # Preferred scheduling time for a visit or virtual consult
+    preferred_datetime: Optional[datetime] = Field(
+        None, description="Client's preferred date and time for an assessment"
+    )

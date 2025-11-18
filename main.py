@@ -1,9 +1,9 @@
 import os
 from typing import List, Optional
+from datetime import datetime
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, EmailStr
-from bson import ObjectId
 
 from database import db, create_document, get_documents
 from schemas import Lead
@@ -30,6 +30,7 @@ class LeadCreate(BaseModel):
     budget_range: Optional[str] = None
     message: Optional[str] = None
     source: Optional[str] = None
+    preferred_datetime: Optional[datetime] = None
 
 
 @app.get("/")
